@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+
+{% block title %}{% page_attribute "page_title" %}{% endblock title %}
+
+{% block breadcrumb %}
+  <li><a href="/">home</a></li>
+  <li>My current page</li>
+{% endblock %}
+
+{% block content %}
+  <h3>Home Page</h3>
+{% endblock content %}
