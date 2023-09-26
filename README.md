@@ -85,9 +85,13 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 Félicitations, vous pouvez maintenant commencer à travailler sur le projet. Acceder à votre projet depuis le navigateur de la manière suivante :
 
-    - Windows : 
-        http://127.0.0.1:8000
-    - Linux :
-        http://[votre_adresse_ip]:8000
+- Windows :
+    ```	bash
+    http://127.0.0.1:8000
+    ```	
+- Linux :
+    ```	bash
+    http://[votre_adresse_ip]:8000
+    ```
 
 ***Consulter la documentation de Django-CMS : https://docs.django-cms.org/en/latest/ pour vous aider à prendre en main la technologies et ses fonctionnalités.***
