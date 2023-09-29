@@ -1,5 +1,8 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -10,7 +13,7 @@ SECRET_KEY = 'django-insecure-ffehi5f6#0@ni+*7u8y$vv&5xsim*m1sg+tmhc)x%*63e0f^o-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['comprendrepouragir.net', '137.184.106.250', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -120,12 +123,27 @@ THUMBNAIL_PROCESSORS = (
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+ENV=os.environ.get('ENV')
+
+if ENV == 'DEV':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'project.db'
+        }
     }
-}
+else:
+    if ENV == 'TEST':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_TEST') ,
+                'USER': os.environ.get('DB_USERNAME'),
+                'PASSWORD':  os.environ.get('DB_PASSWORD'),
+                'PORT': '5432',
+                'HOST': 'localhost'
+            }
+        }
 
 
 # Password validation
@@ -170,8 +188,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'cpa', "static"),
+]
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = "/media/"
