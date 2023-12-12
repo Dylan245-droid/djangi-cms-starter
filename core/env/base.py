@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-ffehi5f6#0@ni+*7u8y$vv&5xsim*m1sg+tmhc)x%*63e0f^o-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['comprendrepouragir.net', '137.184.106.250', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -26,9 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # core
-    'event',
 
     # cms
     'django.contrib.sites',
@@ -71,7 +68,7 @@ MIDDLEWARE = [
     'cms.middleware.utils.ApphookReloadMiddleware',
 ]
 
-ROOT_URLCONF = 'cpa.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -99,16 +96,13 @@ CMS_TEMPLATES = (
     ('fullwidth.html', 'Fullwidth'),
     ('sidebar_left.html', 'Sidebar Left'),
     ('sidebar_right.html', 'Sidebar Right'),
-    
+
     # custom
     ('home.html', 'Home page template'),
     ('base.html', 'Base page template'),
-    
-    # event
-    ('event/event_list.html', 'All events list'),
 )
 
-WSGI_APPLICATION = 'cpa.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 # django-filer
 THUMBNAIL_HIGH_RESOLUTION = True
@@ -123,27 +117,37 @@ THUMBNAIL_PROCESSORS = (
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-ENV=os.environ.get('ENV')
+ENV = os.environ.get('ENV')
 
-if ENV == 'DEV':
+if ENV == 'TEST':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_TEST'),
+            'USER': os.environ.get('DB_USERNAME'),
+            'PASSWORD':  os.environ.get('DB_PASSWORD'),
+            'PORT': '5432',
+            'HOST': 'localhost'
+        }
+    }
+elif ENV == 'PROD':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USERNAME'),
+            'PASSWORD':  os.environ.get('DB_PASSWORD'),
+            'PORT': '5432',
+            'HOST': 'localhost'
+        }
+    }
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': 'project.db'
         }
     }
-else:
-    if ENV == 'TEST':
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ.get('DB_TEST') ,
-                'USER': os.environ.get('DB_USERNAME'),
-                'PASSWORD':  os.environ.get('DB_PASSWORD'),
-                'PORT': '5432',
-                'HOST': 'localhost'
-            }
-        }
 
 
 # Password validation
@@ -190,7 +194,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'cpa', "static"),
+    os.path.join(BASE_DIR, 'core', "static"),
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'

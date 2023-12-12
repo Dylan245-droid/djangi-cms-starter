@@ -1,9 +1,0 @@
-<h1>{{ instance.event.name }}</h1>
-
-<form action="/" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        <input type="text" name="name" class="form-control">
-    </div>
-    <input type="submit" value="Save" />
-</form>
