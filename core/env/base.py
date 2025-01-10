@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 
 load_dotenv()
 
@@ -13,7 +15,8 @@ SECRET_KEY = 'django-insecure-ffehi5f6#0@ni+*7u8y$vv&5xsim*m1sg+tmhc)x%*63e0f^o-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = []
 
 
 # Application definition
@@ -49,6 +52,14 @@ INSTALLED_APPS = [
     'djangocms_googlemap',
     'djangocms_snippet',
     'djangocms_style',
+
+    # custom
+    'ckeditor',
+    'modeltranslation',
+    'widget_tweaks',
+    'cloudinary_storage',
+    'cloudinary',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 
     # cms
     'cms.middleware.user.CurrentUserMiddleware',
@@ -179,6 +191,37 @@ LANGUAGES = [
     ('en', 'English'),
 ]
 
+CMS_LANGUAGES = {
+    1: [
+        {
+            'code': 'fr',
+            'name': _('French'),
+            'fallbacks': ['en'],
+            'public': True,
+            'hide_untranslated': False,
+            'redirect_on_fallback': False,
+        },
+        {
+            'code': 'en',
+            'name': _('English'),
+            'fallbacks': ['fr'],
+            'public': True,
+            'hide_untranslated': False,
+            'redirect_on_fallback': False,
+        },
+    ],
+    'default': {
+        'fallbacks': ['fr', 'en'],
+        'redirect_on_fallback': False,
+        'public': True,
+        'hide_untranslated': False,
+    }
+}
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale"
+]
+
 TIME_ZONE = 'Africa/Libreville'
 
 USE_I18N = True
@@ -191,14 +234,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core', "static"),
+    BASE_DIR / 'core' / 'static',
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = "/media/"
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUD_NAME"),
+    'API_KEY': os.getenv("API_KEY"),
+    'API_SECRET': os.getenv("API_SECRET")
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -207,3 +256,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'allowedContent': True,
+    },
+}
+
+# SMTP Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+CONTACT_MAIL = os.getenv("CONTACT_MAIL")
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-info",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}
+
+if os.getenv("ENV") == "PROD":
+    VIDEO_FIELD = 'cloudinary'
+else:
+    VIDEO_FIELD = 'file'
